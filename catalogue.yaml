@@ -10,7 +10,7 @@
 
   - name: install nodejs
     ansible.builtin.package:
-     name: install nodejs
+     name: nodejs
      state: present
      
   - name: create user roboshop
