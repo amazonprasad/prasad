@@ -1,0 +1,31 @@
+- name: redis component
+  hosts: redis  
+  become: yes
+  taaks: 
+  - name: install redis release
+    ansible.builtin.command: dnf install https://rpms.remirepo.net/enterprise/remi-release-8.6.rpm -y
+
+  - name: Reset default Redis module
+    ansible.builtin.command: dnf module reset redis -y
+
+  - name: enable redis
+    ansible.builtin.command: dnf module enable redis:6 -y
+
+  - name: install reids
+    ansible.builtin.package:
+      name: redis
+      state: present
+  
+  - name: allow remote access
+    ansible.builtin.replace:
+      path: /etc/redis/redis.conf
+      regexp: '127.0.0.1'
+      replace: '0.0.0.0'
+
+  - name: enable and start redis
+    ansible.builtin.service:
+      name: redis
+      state: started
+      enabled: yes
+
+      
