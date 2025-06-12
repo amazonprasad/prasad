@@ -63,4 +63,5 @@
       state: present
   
   - name: loda catalouge data 
-    ansible.builtin.command: mongo --host mongodb.manacars.shop </app/schema/catalogue.js
+    ansible.builtin.command: mongo --host mongodb.manacars.shop < /app/schema/catalogue.js
+    
