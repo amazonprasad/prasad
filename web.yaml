@@ -32,6 +32,15 @@
     ansible.builtin.copy:
       src: roboshop.conf
       dest: /etc/nginx/default.d/roboshop.conf 
+  - name: Test nginx config
+    command: nginx -t
+    register: nginx_check
+    ignore_errors: yes
+
+  - name: Fail if nginx config test fails
+    fail:
+     msg: "Nginx configuration is invalid"
+    when: nginx_check.rc != 0
 
 
   - name: start and enable 
