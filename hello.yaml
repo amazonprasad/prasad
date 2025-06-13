@@ -12,9 +12,7 @@
     ansible.builtin.command: dnf module enable redis:remi-6.2 -y
     
   - name: Install Redis
-    ansible.builtin.dnf:
-      name: redis
-      state: present
+    ansible.builtin.dnf: dnf install redis -y 
 
   - name: allow remote connections
     ansible.builtin.replace:
