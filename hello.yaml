@@ -1,29 +1,42 @@
-- name: install redis component
-  hosts: redis
+- name: install web component
+  hosts: localhost
   become: yes
   tasks:
-  - name: install redis release
-    ansible.builtin.command: dnf install https://rpms.remirepo.net/enterprise/remi-release-8.6.rpm -y
-
-  - name: Reset default Redis module
-    ansible.builtin.command: dnf module reset redis -y
-
-  - name: Enable default Redis module
-    ansible.builtin.command: dnf module enable redis:remi-6.2 -y
+  - name: install nginx 
+    ansible.builtin.dnf:
+      name: nginx 
+      state: present
+  
+  - name: remove html directory
+    ansible.builtin.file:
+      path: /usr/share/nginx/html
+      state: absent
+  
+  - name: create html directory
+    ansible.builtin.file:
+      path: /usr/share/nginx/html 
+      state: directory
     
-  - name: Install Redis
-    ansible.builtin.package:
-     name: redis
-     state: present
+  - name: download web application
+    ansible.builtin.get_url: 
+      url:  https://roboshop-artifacts.s3.amazonaws.com/frontend.zip 
+      dest: /tmp
+  
+  - name: unarchive directory
+    ansible.builtin.unarchive:
+      src: /tmp/frontend.zip
+      dest: /usr/share/nginx/html
+      remote_src: yes
 
-  - name: allow remote connections
-    ansible.builtin.replace:
-      path: /etc/redis.conf
-      regexp: '127.0.0.1'
-      replace: '0.0.0.0'
+  - name: copy file 
+    ansible.builtin.copy:
+     src: roboshop.conf
+     dest: /etc/nginx/default.d/roboshop.conf
 
-  - name: start and enable redis
+  - name: start and enable nginx
     ansible.builtin.service:
-      name: redis
-      state: restarted
+      name: nginx
+      state: started
       enabled: yes
+
+  
