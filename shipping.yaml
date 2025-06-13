@@ -28,8 +28,8 @@
 
   - name: extract shipping file 
     ansible.builtin.unarchive:
-      src: /tmp/shipping.zip 
-      path: /app
+      src: /tmp/shipping  
+      dest: /app
       remote_src: yes
 
   - name: install package
