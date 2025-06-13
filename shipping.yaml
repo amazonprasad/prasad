@@ -57,7 +57,7 @@
     ansible.builtin.service: 
       name: shipping
       state: started
-      enabled: ye
+      enabled: yes
 
   - name: install mysql
     ansible.builtin.package:
