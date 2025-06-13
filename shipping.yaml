@@ -1,6 +1,8 @@
 - name: shipping component 
   hosts: shipping
   become: yes
+  vars:
+    password: RoboShop@1
   tasks:  
   - name: install maven
     ansible.builtin.package:
@@ -36,6 +38,37 @@
     ansible.builtin.command: mvn clean package
     args:
       chdir: /app
+  
+  - name: rename jar file 
+    ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar 
 
+  - name: copy shipping.service
+    ansible.builtin.service:  
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service
+
+  - name: daemon-reload
+    ansible.builtin.systemd_service:
+     daemon_reload: true
+  
+  - name: start and enable shipping
+    ansible.builtin.service: 
+      name: shipping
+      state: started
+      enabled: ye
       
+  - name: install mysql
+    ansible.builtin.package:
+      name: mysql
+      state: present
 
+  - name: check cities schema exists or not
+    ansible.builtin.command:  mysql -h mysql.manacars.shop -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
+    register: schema
+
+  - name: print output
+    ansible.builtin.debug:
+      msg: "schema output: {{schema}}"
+  
+  - name: load cities date
+    ansible.builtin.command: mysql -h mysql.manacars.shop -uroot -p{{password}} < /app/schema/shipping.sql 
