@@ -74,3 +74,10 @@
   
   - name: load cities date
     ansible.builtin.command: mysql -h mysql.manacars.shop -uroot -p{{password}} < /app/schema/shipping.sql 
+    when: schema.stdout != "1"
+
+  - name: start and enable shipping
+    ansible.builtin.service: 
+      name: shipping
+      state: started
+      enabled: yes
