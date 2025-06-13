@@ -64,3 +64,4 @@
   
   - name: loda catalouge data 
     ansible.builtin.command: mongo --host mongodb.manacars.shop < /app/schema/user.js
+    
